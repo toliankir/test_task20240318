@@ -8,36 +8,36 @@ export class New1710774239406 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hashedPassword = await bcrypt.hash('123', 10);
     queryRunner.query(`
-      INSERT INTO "users"("email", "password") VALUES ('${New1710774239406.ADMIN_EMAIL}', '${hashedPassword}');
-      INSERT INTO "user_role"("user_id", "role_id")
+      INSERT INTO "test_task20240318"."users"("email", "password") VALUES ('${New1710774239406.ADMIN_EMAIL}', '${hashedPassword}');
+      INSERT INTO "test_task20240318"."user_role"("user_id", "role_id")
         VALUES (
-          (SELECT "id" FROM "users" WHERE "email" = '${New1710774239406.ADMIN_EMAIL}'),
-          (SELECT "id" FROM "roles" WHERE "role" = '${UserRole.admin}')
+          (SELECT "id" FROM "test_task20240318"."users" WHERE "email" = '${New1710774239406.ADMIN_EMAIL}'),
+          (SELECT "id" FROM "test_task20240318"."roles" WHERE "role" = '${UserRole.admin}')
         );
 
-      INSERT INTO "users"("email", "password") VALUES ('${New1710774239406.SUPER_EMAIL}', '${hashedPassword}');
-      INSERT INTO "user_role"("user_id", "role_id")
+      INSERT INTO "test_task20240318"."users"("email", "password") VALUES ('${New1710774239406.SUPER_EMAIL}', '${hashedPassword}');
+      INSERT INTO "test_task20240318"."user_role"("user_id", "role_id")
         VALUES (
-          (SELECT "id" FROM "users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}'),
-          (SELECT "id" FROM "roles" WHERE "role" = '${UserRole.admin}')
+          (SELECT "id" FROM "test_task20240318"."users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}'),
+          (SELECT "id" FROM "test_task20240318"."roles" WHERE "role" = '${UserRole.admin}')
         );
-      INSERT INTO "user_role"("user_id", "role_id")
+      INSERT INTO "test_task20240318"."user_role"("user_id", "role_id")
         VALUES (
-          (SELECT "id" FROM "users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}'),
-          (SELECT "id" FROM "roles" WHERE "role" = '${UserRole.editor}')
+          (SELECT "id" FROM "test_task20240318"."users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}'),
+          (SELECT "id" FROM "test_task20240318"."roles" WHERE "role" = '${UserRole.editor}')
         );
-      INSERT INTO "user_role"("user_id", "role_id")
+      INSERT INTO "test_task20240318"."user_role"("user_id", "role_id")
         VALUES (
-          (SELECT "id" FROM "users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}'),
-          (SELECT "id" FROM "roles" WHERE "role" = '${UserRole.viewer}')
+          (SELECT "id" FROM "test_task20240318"."users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}'),
+          (SELECT "id" FROM "test_task20240318"."roles" WHERE "role" = '${UserRole.viewer}')
         );
       `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     queryRunner.query(`
-      DELETE FROM "users" WHERE "email" = '${New1710774239406.ADMIN_EMAIL}';
-      DELETE FROM "users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}';
+      DELETE FROM "test_task20240318"."users" WHERE "email" = '${New1710774239406.ADMIN_EMAIL}';
+      DELETE FROM "test_task20240318"."users" WHERE "email" = '${New1710774239406.SUPER_EMAIL}';
       `);
   }
 }
