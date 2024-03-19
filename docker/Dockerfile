@@ -4,7 +4,7 @@ ARG IMAGE_TAG_NODEJS=20-alpine
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:${IMAGE_TAG_NODEJS} As development
+FROM node:${IMAGE_TAG_NODEJS} AS development
 
 WORKDIR /usr/src/app
 
@@ -20,7 +20,7 @@ USER node
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:${IMAGE_TAG_NODEJS} As build
+FROM node:${IMAGE_TAG_NODEJS} AS build
 
 WORKDIR /usr/src/app
 
@@ -42,8 +42,11 @@ USER node
 # PRODUCTION
 ###################
 
-FROM nginx As production
+FROM nginx AS production
 
 COPY --chown=node:node --from=build /usr/src/app/dist /usr/share/nginx/html
+COPY --chown=node:node --from=build /usr/src/app/docker/entrypoint.sh ./entrypoint.sh
 
 EXPOSE 80
+
+CMD [ "./entrypoint.sh" ]

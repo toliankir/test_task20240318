@@ -1,3 +1,3 @@
 export const getApiUrl = (): string => {
-    return (window as any).apiUrl;
+    return import.meta.env.VITE_API_URL || (window as any).apiUrl;
 }

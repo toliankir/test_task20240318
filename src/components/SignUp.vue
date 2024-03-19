@@ -36,7 +36,7 @@ onMounted(async () => {
     }
 });
 
-async function createUser(e) {
+async function createUser(e: any) {
     e.preventDefault();
     try {
         state.errorMessage = null;

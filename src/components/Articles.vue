@@ -12,13 +12,17 @@ const state = reactive<{
     title: string;
     text: string;
     errorMessage: string | null;
-    articles: Article[]
+    articles: Article[],
+    offset: number,
+    limit: number,
 }>({
     editId: null,
     title: "",
     text: "",
     errorMessage: null,
-    articles: []
+    articles: [],
+    offset: 0,
+    limit: 4
 });
 
 
@@ -36,8 +40,15 @@ const fetchArticles = async () => {
                 path: "/articles",
                 method: "GET",
                 token: $cookies?.get("token"),
-                role: store.state.userRole
+                role: store.state.userRole,
+                query: {
+                    offset: state.offset,
+                    limit: state.limit
+                }
             });
+            if (result.length === 0) {
+                return;
+            }
             state.articles = result;
         } catch (e) {
             state.errorMessage = wrapError(e);
@@ -69,7 +80,7 @@ const deleteArticle = async (articleId: number) => {
     }
 }
 
-const createArticle = async (e) => {
+const createArticle = async (e: any) => {
     e.preventDefault()
     if ($cookies?.isKey("token") && store.state.userRole) {
         if (!state.text || !state.title) {
@@ -111,14 +122,14 @@ const startEdit = (articleId: number) => {
     state.text = article.text;
 }
 
-const cancelEdit =(e) => {
+const cancelEdit = (e: any) => {
     e.preventDefault();
     state.editId = null;
     state.title = "";
     state.text = "";
 }
 
-const saveEdit = async (e) => {
+const saveEdit = async (e: any) => {
     e.preventDefault();
     if ($cookies?.isKey("token") && store.state.userRole) {
         if (!state.text || !state.title) {
@@ -150,22 +161,34 @@ const saveEdit = async (e) => {
         }
     }
 }
+
+const fetchNext = () => {
+    if (state.articles.length === 4) {
+        state.offset = state.offset + state.limit;
+        fetchArticles()
+    }
+}
+
+const fetchPrev = () => {
+    if (state.offset > 0) {
+        state.offset = state.offset - state.limit;
+        fetchArticles()
+    }
+}
 </script>
 
 <template>
     <div class="flex justify-center items-center flex-col">
         <p class="font-bold text-blue-700 uppercase">Articles</p>
         <p v-if="state.editId" class="font-bold text-blue-700 mt-2">Edit article {{ state.editId }}</p>
-        <form class="w-1/2 md:w-1/3">
+        <form class="w-1/2">
             <div class="my-2">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
                 <input type="text" v-model="state.title"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Title" required />
             </div>
 
             <div class="my-2">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Text</label>
                 <textarea v-model="state.text"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Text" required />
@@ -190,10 +213,10 @@ const saveEdit = async (e) => {
             <div v-for="article in state.articles" class="w-full sm:w-full lg:w-1/2 p-2 inline-block">
                 <div class="p-2 bg-gray-100 rounded flex items-start">
                     <div class="p-2">
-                        <p class="text-blue-500 font-semibold"><span>Id : {{ article.id }}</span></p>
-                        <p class="text-sm">Email: <span>{{ article.email }}</span></p>
-                        <p class="text-sm">Title: <span>{{ article.title }}</span></p>
-                        <p class="text-sm">Text: <span>{{ article.text }}</span></p>
+                        <p class="text-blue-500 font-semibold">Id : {{ article.id }}</p>
+                        <p class="text-sm">Email: {{ article.email }}</p>
+                        <p class="text-sm bg-white p-2 rounded">{{ article.title }}</p>
+                        <p class="text-sm bg-white p-2 rounded my-2">{{ article.text }}</p>
                         <div>
                             <button class="bg-red-800 text-white text-sm rounded py-1 px-3 mt-1 hover:bg-red-600"
                                 @click="deleteArticle(article.id)">Delete</button>
@@ -203,6 +226,10 @@ const saveEdit = async (e) => {
                     </div>
                 </div>
             </div>
+        </div>
+        <div>
+            <span @click="fetchPrev" class="select-none font-semibold mx-3 text-blue-700 hover:text-blue-900 hover:cursor-pointer">Prev</span>
+            <span @click="fetchNext" class="select-none font-semibold mx-3 text-blue-700 hover:text-blue-900 hover:cursor-pointer">Next</span>
         </div>
     </div>
     <div v-if="state.errorMessage" class="font-semibold text-red-600">

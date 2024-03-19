@@ -21,7 +21,7 @@ const state = reactive<{
 
 const $cookies = inject<VueCookies>('$cookies');
 
-async function login(e) {
+async function login(e: any) {
     e.preventDefault();
     try {
         state.errorMessage = null;

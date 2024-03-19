@@ -86,7 +86,7 @@ onMounted(() => {
     parseToken();
 });
 
-const setRole = (e) => {
+const setRole = (e: any) => {
     e.preventDefault();
     store.commit("setUserRole", state.role);
 }

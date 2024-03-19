@@ -6,6 +6,7 @@ export const makeRequest = async <T>(opts: {
     data?: { [key: string]: unknown }
     token?: string;
     role?: string;
+    query?: { [key: string]: string | number }
 }): Promise<T> => {
 
     const apiUrl = getApiUrl();
@@ -15,6 +16,7 @@ export const makeRequest = async <T>(opts: {
             "Content-Type": "application/json"
         }
     };
+
     if (opts.data) {
         options.body = JSON.stringify(opts.data);
     }
@@ -33,11 +35,19 @@ export const makeRequest = async <T>(opts: {
         }
     }
 
-    const req = await fetch(`${apiUrl}${opts.path}`, options);
+    let searchParams: URLSearchParams | null = null;
+    if (opts.query) {
+        searchParams = new URLSearchParams();
+        for (const key of Object.keys(opts.query)) {
+            searchParams.append(key, opts.query[key].toString());
+        }
+    }
+
+    const req = await fetch(`${apiUrl}${opts.path}${ searchParams ? `?${searchParams.toString()}` : ""}`, options);
     if (req.status >= 300) {
         throw new Error(`${req.status}: ${req.statusText}`);
     }
-    
+
     const obj = await req.json();
     return obj;
 }
