@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from 'src/modules/user/types/user-role.enum';
+import { UserRole } from '../../modules/user/types/user-role.enum';
 
 export class New1710774239406 implements MigrationInterface {
   private static ADMIN_EMAIL = 'admin@mail.com';

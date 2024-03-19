@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ArticleEntity } from 'src/database/entity/article.entity';
+import { ArticleEntity } from '../../database/entity/article.entity';
 import { ArticleDtoResponse } from './dto/article-response.dto';
 import { ArticleCreateDtoRequest } from './dto/article-create-request.dto';
 import { User } from '../user/types/user';

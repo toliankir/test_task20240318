@@ -1,4 +1,4 @@
-import { UserRole } from 'src/modules/user/types/user-role.enum';
+import { UserRole } from '../../modules/user/types/user-role.enum';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class New1710722239634 implements MigrationInterface {

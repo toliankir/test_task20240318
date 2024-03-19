@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArticleEntity } from 'src/database/entity/article.entity';
+import { ArticleEntity } from '../../../database/entity/article.entity';
 
 export class ArticleDtoResponse {
   @ApiProperty({ example: 1 })
