@@ -1,7 +1,7 @@
 import { UserRole } from './user-role.enum';
 
-export interface User {
+export interface UserWithRole {
   id: number;
-  email: string;
   roles: UserRole[];
+  selectedRole: UserRole;
 }

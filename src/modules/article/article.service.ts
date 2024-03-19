@@ -8,6 +8,7 @@ import { ArticleCreateDtoRequest } from './dto/article-create-request.dto';
 import { User } from '../user/types/user';
 import { ArticleActionDtoResponse } from './dto/article-action-response.dto';
 import { UserRole } from '../user/types/user-role.enum';
+import { ArticleUpdateDtoRequest } from './dto/article-update-request.dto';
 
 @Injectable()
 export class ArticleService {
@@ -23,6 +24,10 @@ export class ArticleService {
     const articles: ArticleEntity[] = await this.articleRepository.find({
       skip: offset,
       take: limit,
+      relations: ['user'],
+      order: {
+        id: 'ASC',
+      },
     });
 
     return articles.map((e) => ArticleDtoResponse.fromEntity(e));
@@ -31,6 +36,7 @@ export class ArticleService {
   public async getArticle(id: number): Promise<ArticleDtoResponse> {
     const article: ArticleEntity = await this.articleRepository.findOneOrFail({
       where: { id },
+      relations: ['user'],
     });
 
     return ArticleDtoResponse.fromEntity(article);
@@ -55,15 +61,15 @@ export class ArticleService {
 
   public async updateArticle(
     userId: number,
-    articleId: number,
-    data: ArticleCreateDtoRequest,
+    data: ArticleUpdateDtoRequest,
   ): Promise<boolean> {
     const updateArticle: DeepPartial<ArticleEntity> = {
       title: data.title,
       text: data.text,
     };
-    const updateResult = await this.articleRepository.update({
-        id: articleId,
+    const updateResult = await this.articleRepository.update(
+      {
+        id: data.id,
         userId,
       },
       updateArticle,

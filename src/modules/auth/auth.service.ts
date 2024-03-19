@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../../modules/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -7,7 +7,6 @@ import { LoginResponseDto } from './dto/login.response.dto';
 import { RefreshResponseDto } from './dto/refresh.response.dto';
 import { User } from '../user/types/user';
 import { UserFull } from '../user/types/user-full';
-import { LoginRequestDto } from './dto/login.request.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,30 +76,21 @@ export class AuthService {
 
     return {
       id: user.id,
+      email: user.email,
       roles: user.roles,
     };
   }
 
-  public async login(
-    user: User,
-    data: LoginRequestDto,
-  ): Promise<LoginResponseDto> {
-    if (!user.roles.includes(data.role)) {
-      throw new BadRequestException(
-        `Not allowed role "${data.role}" for user.`,
-      );
-    }
-
-    const token = await this.jwtService.signAsync(
-      {
-        id: user.id,
-        roles: [data.role],
-      },
-      {
-        secret: this.jwtSecret,
-        expiresIn: this.jwtTtl,
-      },
-    );
+  public async login(user: User): Promise<LoginResponseDto> {
+    const userPayload: User = {
+      id: user.id,
+      email: user.email,
+      roles: user.roles,
+    };
+    const token = await this.jwtService.signAsync(userPayload, {
+      secret: this.jwtSecret,
+      expiresIn: this.jwtTtl,
+    });
     const refreshToken = await this.jwtService.signAsync(
       {
         id: user.id,
@@ -119,16 +109,17 @@ export class AuthService {
   }
 
   public async refreshToken(user: User): Promise<RefreshResponseDto> {
-    const token = await this.jwtService.signAsync(
-      {
-        id: user.id,
-        roles: user.roles,
-      },
-      {
-        secret: this.jwtSecret,
-        expiresIn: this.jwtTtl,
-      },
-    );
+    const userData = await this.userService.findUserById(user.id);
+    const userPayload: User = {
+      id: user.id,
+      email: user.email,
+      roles: userData.roles,
+    };
+
+    const token = await this.jwtService.signAsync(userPayload, {
+      secret: this.jwtSecret,
+      expiresIn: this.jwtTtl,
+    });
 
     return {
       id: user.id,

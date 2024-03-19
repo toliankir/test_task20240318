@@ -21,11 +21,14 @@ import { ArticlePaginationDtoRequest } from './dto/article-pagination-request.dt
 import { ArticleCreateDtoRequest } from './dto/article-create-request.dto';
 import { ArticleActionDtoResponse } from './dto/article-action-response.dto';
 import { ArticleDtoRequest } from './dto/article-request.dto';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ArticleUpdateDtoRequest } from './dto/article-update-request.dto';
 
 @Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) { }
 
+  @ApiResponse({ type: ArticleDtoResponse, isArray: true })
   @UseGuards(AuthGuard('jwt'))
   @Get()
   public async getArticles(
@@ -37,6 +40,8 @@ export class ArticleController {
     );
   }
 
+  @ApiBody({ type: ArticleCreateDtoRequest })
+  @ApiResponse({ type: ArticleActionDtoResponse })
   @Roles([UserRole.editor])
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard('jwt'))
@@ -48,6 +53,7 @@ export class ArticleController {
     return this.articleService.createArticle(user.id, data);
   }
 
+  @ApiResponse({ type: ArticleDtoResponse })
   @Roles([UserRole.admin, UserRole.editor, UserRole.viewer])
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard('jwt'))
@@ -58,34 +64,35 @@ export class ArticleController {
     return this.articleService.getArticle(data.id);
   }
 
+  @ApiBody({ type: ArticleUpdateDtoRequest })
+  @ApiResponse({ type: ArticleActionDtoResponse })
   @Roles([UserRole.editor])
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard('jwt'))
-  @Put(':id')
+  @Put()
   public async updateArticle(
     @GetUser() user: User,
-    @Param() article: ArticleDtoRequest,
-    @Body() data: ArticleCreateDtoRequest,
+    @Body() data: ArticleUpdateDtoRequest,
   ): Promise<ArticleActionDtoResponse> {
     const updated: boolean = await this.articleService.updateArticle(
       user.id,
-      article.id,
       data,
     );
 
     return {
-      id: updated ? article.id : null,
+      id: updated ? data.id : null,
     };
   }
 
+  @ApiResponse({ type: ArticleActionDtoResponse })
   @Roles([UserRole.admin, UserRole.editor])
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
+  @Delete()
   public async deleteArticle(
     @GetUser() user: User,
-    @Param() article: ArticleDtoRequest,
-  ) {
+    @Body() article: ArticleDtoRequest,
+  ): Promise<ArticleActionDtoResponse> {
     const deleted: boolean = await this.articleService.deleteArticle(
       user,
       article.id,

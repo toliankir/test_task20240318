@@ -29,5 +29,5 @@ export class ArticleEntity {
 
   @ManyToOne(() => UserEntity, { cascade: true })
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
-  public readonly user!: UserEntity;
+  public readonly user: UserEntity;
 }
