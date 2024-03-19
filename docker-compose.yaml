@@ -49,7 +49,7 @@ services:
       - 127.0.0.1:53111:5432/tcp
 
   backend:
-    build: 
+    build:
       context: backend
       dockerfile: docker/Dockerfile
     depends_on:
@@ -59,7 +59,7 @@ services:
     ports:
       - 127.0.0.1:3100:3000/tcp
     environment:
-      - 'POSTGRES_CONNECTION_STRING=postgres://postgres:@postgres:5432/devdb?schema=public'
+      - 'POSTGRES_CONNECTION_STRING=postgres://postgres:@postgres:5432/devdb?schema=test_task20240318'
       - 'JWT_SECRET=STRONG_JWT_SECRET'
       - 'JWT_REFRESH_SECRET=STRONG_JWT_REFRESH_SECRET'
       - 'JWT_TTL_MINUTES=60'
@@ -68,7 +68,7 @@ services:
       - 'RUN_SEED=yes'
 
   frontend:
-    build: 
+    build:
       context: frontend
       dockerfile: docker/Dockerfile
     depends_on:

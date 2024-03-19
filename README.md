@@ -28,7 +28,7 @@ code "test-task.code-workspace"
 
 ### Running in docker
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 ### Notes
