@@ -1,0 +1,81 @@
+version: "3.9"
+
+networks:
+  default:
+    name: "test-task-local-tier"
+
+volumes:
+  # Unused stub volume to prevent error "volumes must be a mapping" when all volumes disabled
+  stub:
+
+services:
+#
+#  ___          __                   _                       _                     
+# |_ _| _ __   / _| _ __  __ _  ___ | |_  _ __  _   _   ___ | |_  _   _  _ __  ___ 
+#  | | | '_ \ | |_ | '__|/ _` |/ __|| __|| '__|| | | | / __|| __|| | | || '__|/ _ \
+#  | | | | | ||  _|| |  | (_| |\__ \| |_ | |   | |_| || (__ | |_ | |_| || |  |  __/
+# |___||_| |_||_|  |_|   \__,_||___/ \__||_|    \__,_| \___| \__| \__,_||_|   \___|
+#                                                                                  
+#
+
+  pgadmin:
+    image: theanurin/pgadmin4:7.5-0
+    hostname: "fedora"
+    domainname: ""
+    volumes:
+      - ./configs/pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:53101:80
+    environment:
+      - 'PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False'
+      - 'PGADMIN_CONFIG_SERVER_MODE=False'
+      - 'PGADMIN_BG_COLOR=#C0C0C0'
+      - 'PGADMIN_DEFAULT_EMAIL=dev@in.cwtest.online'
+      - 'PGADMIN_DEFAULT_PASSWORD=devel'
+
+  postgres:
+    image: theanurin/devel.postgres-13:13.12.1
+    hostname: "fedora"
+    domainname: ""
+    volumes:
+      - ./dbseed/postgres:/updates
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:53111:5432/tcp
+
+  backend:
+    build: 
+      context: backend
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:3100:3000/tcp
+    environment:
+      - 'POSTGRES_CONNECTION_STRING=postgres://postgres:@postgres:5432/devdb?schema=public'
+      - 'JWT_SECRET=STRONG_JWT_SECRET'
+      - 'JWT_REFRESH_SECRET=STRONG_JWT_REFRESH_SECRET'
+      - 'JWT_TTL_MINUTES=60'
+      - 'JWT_REFRESH_TTL_MINUTES=43200'
+      - 'RUN_MIGRATION=yes'
+      - 'RUN_SEED=yes'
+
+  frontend:
+    build: 
+      context: frontend
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - backend
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:3180:80/tcp
+    environment:
+      - 'API_URL=http://127.0.0.1:3100'

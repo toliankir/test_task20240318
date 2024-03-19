@@ -21,6 +21,17 @@ git worktree add local-env local-env
 code "test-task.code-workspace"
 ```
 
+### Running
+* Run local environment according to README.md
+* Run backend service according to README.md
+* Run frontend service according to README.md
+
+### Running in docker
+```bash
+docker-compose up
+```
+
+
 ### Add new orphan branch
 
 ```shell
