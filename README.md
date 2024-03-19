@@ -31,6 +31,12 @@ code "test-task.code-workspace"
 docker-compose up
 ```
 
+### Notes
+
+Predefined users
+
+* login - admin@mail.com / password - 123
+* login - super@mail.com / password - 123
 
 ### Add new orphan branch
 

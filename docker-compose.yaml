@@ -23,7 +23,7 @@ services:
     hostname: "fedora"
     domainname: ""
     volumes:
-      - ./configs/pgadmin/servers.json:/pgadmin4/servers.json
+      - ./local-env/configs/pgadmin/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
     networks:
@@ -42,7 +42,7 @@ services:
     hostname: "fedora"
     domainname: ""
     volumes:
-      - ./dbseed/postgres:/updates
+      - ./local-env/dbseed/postgres:/updates
     networks:
       - default
     ports:
