@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsPositive, Max } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, Max, Min } from 'class-validator';
 
 export class ArticlePaginationDtoRequest {
   @ApiProperty({ example: 1, required: true })
@@ -11,7 +11,7 @@ export class ArticlePaginationDtoRequest {
 
   @ApiProperty({ example: 2, required: true })
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   offset?: number;
 }
