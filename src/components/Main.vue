@@ -3,10 +3,9 @@
 </script>
 
 <template>
-<div>
-    Main
-</div>
+    <div class="flex justify-center items-center flex-col">
+        <p class="font-bold text-blue-700 uppercase">Main test task 20240318</p>
+    </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

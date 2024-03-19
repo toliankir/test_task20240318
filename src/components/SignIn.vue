@@ -49,7 +49,9 @@ async function login(e: any) {
 
         $cookies?.set("token", result.token, tokenExpireDate);
         $cookies?.set("refreshToken", result.refreshToken, refreshTokenExpireDate);
-        store.commit('setUserRole', tokenData.roles[0]);
+        store.commit("setUserRole", tokenData.roles[0]);
+
+        store.state.eventBus.emit("user-data-update");
 
         router.push('/current-user');
     } catch (e) {

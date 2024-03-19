@@ -5,6 +5,7 @@ import { makeRequest } from '../helpers/make-request';
 import { wrapError } from '../helpers/wrap-error';
 import { useStore } from 'vuex';
 import { AppStore } from '../store';
+import { router } from '../router';
 
 const $cookies = inject<VueCookies>('$cookies');
 const store = useStore<AppStore>();
@@ -56,6 +57,9 @@ const signOut = () => {
         $cookies?.remove("refreshToken");
     }
     state.id = null;
+    store.state.eventBus.emit("user-data-update");
+
+    router.push('/');
 }
 
 const refreshToken = async () => {
@@ -128,7 +132,7 @@ const setRole = (e: any) => {
                     Set role</button>
             </div>
         </div>
-        <div v-if="!state.id" class="w-1/2 md:w-1/3">
+        <div v-if="!state.id" class="w-1/2 md:w-1/3 text-center">
             <p>Require user sign in</p>
         </div>
     </div>

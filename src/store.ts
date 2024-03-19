@@ -1,13 +1,15 @@
+import mitt, { Emitter, EventType } from "mitt";
 import { createStore } from "vuex";
-
 export interface AppStore  {
-    userRole: string | null;  
+    userRole: string | null;
+    eventBus: Emitter<Record<EventType, unknown>>
 }
 
 export const store = createStore<AppStore>({
     state() {
         return {
-            userRole: null
+            userRole: null,
+            eventBus: mitt(),
         }
     },
     mutations: {
@@ -20,6 +22,6 @@ export const store = createStore<AppStore>({
     getters: {
         userRole: (state) => {
             return state.userRole;
-        }
+        },
     }
 });

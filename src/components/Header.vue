@@ -13,13 +13,25 @@ const state = reactive<{
   email: null,
 });
 
-onMounted(() => {
+const updateUserData = () => {
   if ($cookies?.isKey("token")) {
     const tokenData = JSON.parse(atob($cookies?.get("token").split(".")[1]));
     state.email = tokenData.email;
 
-    store.commit('setUserRole', tokenData.roles[0])
+    if (!store.state.userRole) {
+      store.commit('setUserRole', tokenData.roles[0]);
+    }
+  } else {
+    state.email = null;
   }
+}
+
+store.state.eventBus.on("user-data-update", () => {
+  updateUserData();
+});
+
+onMounted(() => {
+  updateUserData();
 });
 </script>
 
