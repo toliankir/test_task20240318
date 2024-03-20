@@ -163,7 +163,7 @@ const saveEdit = async (e: any) => {
 }
 
 const fetchNext = () => {
-    if (state.articles.length === 4) {
+    if (state.articles.length === state.limit) {
         state.offset = state.offset + state.limit;
         fetchArticles()
     }
